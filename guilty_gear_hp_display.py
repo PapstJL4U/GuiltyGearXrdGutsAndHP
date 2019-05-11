@@ -42,8 +42,8 @@ def create_real_hp():
     #generate base image and text layer
     #   height = Amount of characters + base value
     #   width = equal to the biggest value of all characters
-    comp_image = Image.new(mode="RGBA",size=(int(biggest_factor*600), height*char_size+1))
-    text_layer = Image.new(mode="RGBA",size=(int(biggest_factor*600), height*char_size+1))
+    comp_image = Image.new(mode="RGBA",size=(int(biggest_factor*width), height*char_size+1))
+    text_layer = Image.new(mode="RGBA",size=(int(biggest_factor*width), height*char_size+1))
     text = ImageDraw.Draw(text_layer)
     fnt = ImageFont.truetype('C:\Windows\Fonts\chintzy.ttf', 30)
 
@@ -89,16 +89,17 @@ def create_real_hp_seperate():
     #generate base image and text layer
     #   height = Amount of characters + base value
     #   width = equal to the biggest value of all characters
-    comp_image = Image.new(mode="RGBA",size=(int(biggest_factor*600), height))
-    text_layer = Image.new(mode="RGBA",size=(int(biggest_factor*600), height))
-    text = ImageDraw.Draw(text_layer)
+    comp_image = Image.new(mode="RGBA",size=(int(biggest_factor*width), height))
+
     fnt = ImageFont.truetype('C:\Windows\Fonts\chintzy.ttf', 30)
 
-    #generate big image by pasting the base_image stretch by character factor and add character name
+    #generate multiple images by pasting the base_image stretch by character factor and add character name
     offset_name = int(height/3)
     for data in image_data:
         scaled_width=int(data[1]*600)
         comp_image.paste(base_image.resize((scaled_width, height), Image.ANTIALIAS),(0, 0))
+        text_layer = Image.new(mode="RGBA",size=(int(biggest_factor*600), height))
+        text = ImageDraw.Draw(text_layer)
         text.text((15,offset_name),data[0], fill=(0, 0, 0, 255), font=fnt)
         #combine text layer and healthbar image and save the combination
         output = Image.alpha_composite(comp_image, text_layer)
