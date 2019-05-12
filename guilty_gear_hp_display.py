@@ -166,8 +166,9 @@ def create_comp_img(char_health):
         sum += ehealth
         # print(ehealth, percentage, sum)
         draw = ImageDraw.Draw(scaled)
-        draw.line([scaled.width * percentage, 0, scaled.width * percentage, scaled.height],
-                  fill=(128, 128, 128, 128), width=3)
+        if percentage < 0.9999:
+            draw.line([scaled.width * percentage, 0, scaled.width * percentage, scaled.height],
+                      fill=(128, 128, 128, 128), width=3)
         draw.text([scaled.width * percentage - 35, scaled.height / 2], str(floor(char_health[i])), \
                   fill=(0, 0, 0, 255), font=fntsmall)
         draw.text((15, scaled.height / 2), "EHP " + str(floor(char_health[-1])), fill=(0, 0, 0, 255),
@@ -231,9 +232,11 @@ def draw_complete_comp():
             percentage += ehealth / entry[7]
             draw = ImageDraw.Draw(comp_image)
             # draw a line at 50/40/30/20/10%
-            draw.line([comp_image.width * percentage, 0 + i * (base.height + margin), comp_image.width * percentage,
-                       base.height + 0 + i * (base.height + margin)],
-                      fill=(128, 128, 128, 128), width=3)
+            # don't draw a line at 0%
+            if percentage < 0.9999:
+                draw.line([comp_image.width * percentage, 0 + i * (base.height + margin), comp_image.width * percentage,
+                           base.height + 0 + i * (base.height + margin)],
+                          fill=(128, 128, 128, 128), width=3)
             # draw eHP values on the hp bar
             draw.text([width * percentage - 40, base.height / 2 + 0 + i * (base.height + margin)], str(floor(entry[j])),
                       fill=(0, 0, 0, 255), font=fntsmall)
@@ -243,8 +246,10 @@ def draw_complete_comp():
                       font=fnt)
 
             #  generate coordinates for diagonal lines between hb bars
-            draw_lines_start.append((comp_image.width * percentage, base.height + 0 + i * (base.height + margin)))
-            draw_lines_end.append((comp_image.width * percentage, 0 + i * (base.height + margin)))
+            # do not draw the 0% diagonal line
+            if percentage < 0.9999:
+                draw_lines_start.append((comp_image.width * percentage, base.height + 0 + i * (base.height + margin)))
+                draw_lines_end.append((comp_image.width * percentage, 0 + i * (base.height + margin)))
 
         # draw diagonal hp bars
         for pair in zip(draw_lines_temp, draw_lines_end):
@@ -259,7 +264,7 @@ def draw_complete_comp():
 
 if __name__ == '__main__':
     # test_stuff()
-    create_real_hp()
-    create_real_hp_seperate()
+    # create_real_hp()
+    # create_real_hp_seperate()
     draw_comp()
     draw_complete_comp()
