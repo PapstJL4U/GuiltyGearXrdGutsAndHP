@@ -11,14 +11,6 @@ hp_start = 14
 hp_end = characters.base_HPbar_in_pixel + 14
 
 
-def test_stuff():
-    char1 = char_list[11]
-    print(ggd.effectiveHP(char1))
-    print(ggd.effectiveHP(char1) / characters.HP)
-    im = Image.open(os.path.join("img", "healthbar_only_radical.png"), mode='r')
-    im.show()
-
-
 def create_real_hp():
     """
     Base assumption are: unmanipulate health is 420 and is 600pixel in weight at a factor of 1.0
@@ -43,8 +35,8 @@ def create_real_hp():
     # generate base image and text layer
     #   height = Amount of characters + base value
     #   width = equal to the biggest value of all characters
-    comp_image = Image.new(mode="RGBA", size=(int(biggest_factor * width), height * char_size + 1))
-    text_layer = Image.new(mode="RGBA", size=(int(biggest_factor * width), height * char_size + 1))
+    comp_image = Image.new(mode="RGBA", size=(int(biggest_factor * width), height * (char_size + 1)))
+    text_layer = Image.new(mode="RGBA", size=(int(biggest_factor * width), height * (char_size + 1)))
     text = ImageDraw.Draw(text_layer)
     fnt = ImageFont.truetype('C:\Windows\Fonts\chintzy.ttf', 30)
 
@@ -84,8 +76,8 @@ def create_real_hp_seperate():
     image_data.sort(key=itemgetter(1))
 
     # generate base image and text layer
-    #   height = Amount of characters + base value
-    #   width = equal to the biggest value of all characters
+    #  height = Amount of characters + base value
+    #  width = equal to the biggest value of all characters
     comp_image = Image.new(mode="RGBA", size=(int(biggest_factor * width), height))
 
     fnt = ImageFont.truetype('C:\Windows\Fonts\chintzy.ttf', 30)
@@ -131,27 +123,27 @@ def linear_health():
     return char_health
 
 
-def create_comp_img(character, char_health):
-    name = character[0]
-    if name != char_health[0]:
-        print(name, char_health)
-        return "wrong characters"
+def create_comp_img(char_health):
+    """generates a single image for a single character, that shows ingame health bar and effective health bar"""
 
-    base = Image.open(os.path.join("img", "healthbar_only_radical.png"), mode='r')
-    scaled = Image.open(os.path.join("img", "healthbar_only_radical.png"), mode='r')
-    width = max(base.width, scaled.width)
+    # generate data to build image with two healthbars: the first shows ingame display, the 2nd effective health.
+    name = char_health[0]
+    base = Image.open(os.path.join("img", "healthbar_only_radical.png"), mode='r') # canvas for ingame representation
+    scaled = Image.open(os.path.join("img", "healthbar_only_radical.png"), mode='r') # canvas for effective health
+    width = base.width
     margin = 25
     height = base.height + scaled.height + margin
-    comp_image = Image.new(mode="RGBA", size=(width, height))
+    comp_image = Image.new(mode="RGBA", size=(width, height)) # combined canvas of base and width
     fnt = ImageFont.truetype('C:\Windows\Fonts\chintzy.ttf', 30)
     fntsmall = ImageFont.truetype('C:\Windows\Fonts\chintzy.ttf', 15)
 
     diagonals_start = []
     diagonals_end = []
     # draw vertial lines across base image at 50/40/30/20/10%
-    i, j = 50, 0
+    # draw percentage value
+    i = 50
     while i > 0:
-        iip = i / 100
+        iip = i / 100 # iip = i in percentage to i goes from 50->0 with an intervall of 10
         draw = ImageDraw.Draw(base)
         draw.line([base.width - base.width * iip, 0, base.width - base.width * iip, base.height],
                   fill=(128, 128, 128, 128), width=3)
@@ -159,12 +151,14 @@ def create_comp_img(character, char_health):
         draw.text((15, base.height / 3), name, fill=(0, 0, 0, 255), font=fnt)
         draw.text((5 + base.width - base.width * iip, base.height / 2), str(i) + "%", fill=(0, 0, 0, 255),
                   font=fntsmall)
+        # remembers points for diagonal lines between both hb bars
         diagonals_start.append((floor(base.width - base.width * iip), base.height))
         i -= 10
-        j += 1
 
+    # saves a sub version for no reason anymore
     base.save(os.path.join("output", "comp", "sub", name + ".png"))
 
+    # draw the effective value of all guts parts on the 2nd canvas
     sum, percentage = 0, 0
     for i in range(1, len(char_health) - 1):
         ehealth = char_health[i]
@@ -178,10 +172,13 @@ def create_comp_img(character, char_health):
                   fill=(0, 0, 0, 255), font=fntsmall)
         draw.text((15, scaled.height / 2), "EHP " + str(floor(char_health[-1])), fill=(0, 0, 0, 255),
                   font=fntsmall)
+        #  remembers the endpoints for the diagonal lines
         diagonals_end.append((floor(scaled.width * percentage), base.height + margin))
 
+    # save for no reason
     scaled.save(os.path.join("output", "comp", "sub", name + "_scaled" + ".png"))
 
+    # combine ingame display and effective hb display abd draw lines between them to guide eyes
     comp_image.paste(base, (0, 0))
     comp_image.paste(scaled, (0, (base.height + margin)))
     for pair in zip(diagonals_start, diagonals_end):
@@ -196,7 +193,7 @@ def draw_comp():
     ch = linear_health()
 
     for i, characters in enumerate(char_list):
-        create_comp_img(char_list[i], ch[i])
+        create_comp_img(ch[i])
 
 
 def draw_complete_comp():
@@ -206,7 +203,8 @@ def draw_complete_comp():
     decile = characters.HP / 10
 
     # generate userdata and and dummy, that represents ingame display
-    complete_list = [["Base Value", characters.HP / 2, decile, decile, decile, decile, decile, characters.HP]] + linear_health()
+    complete_list = [["Base Value", characters.HP / 2, decile, decile, decile, decile, decile,
+                      characters.HP]] + linear_health()
     complete_list.sort(key=itemgetter(-1))
 
     #  load base hp bar image and generate font as well as generate final canvas to drawn and paste on
@@ -215,42 +213,41 @@ def draw_complete_comp():
     fntsmall = ImageFont.truetype('C:\Windows\Fonts\chintzy.ttf', 15)
     margin = 15
     width = base.width
-    height = base.height * len(complete_list) + margin * (len(complete_list) -1)
+    height = base.height * len(complete_list) + margin * (len(complete_list) - 1)
     comp_image = Image.new(mode="RGBA", size=(width, height))
 
-
-    draw_lines_temp = [] # need this to remember coordinates to draw "diagonals" between each hp bar
+    draw_lines_temp = []  # need this to remember coordinates to draw "diagonals" between each hp bar
 
     for i, entry in enumerate(complete_list):
 
         # clean coordinates and paste clean, new HB bar onto the final canvas
         draw_lines_start, draw_lines_end = [], []
-        comp_image.paste(base, (0, 0+i*(base.height+margin)))
-
+        comp_image.paste(base, (0, 0 + i * (base.height + margin)))
 
         # draw all data of a single character on the new blank hp bar
         percentage = 0
         for j in range(1, len(entry) - 1):
-
             ehealth = entry[j]
             percentage += ehealth / entry[7]
             draw = ImageDraw.Draw(comp_image)
             # draw a line at 50/40/30/20/10%
-            draw.line([comp_image.width * percentage, 0+i*(base.height+margin), comp_image.width * percentage, base.height+0+i*(base.height+margin)],
+            draw.line([comp_image.width * percentage, 0 + i * (base.height + margin), comp_image.width * percentage,
+                       base.height + 0 + i * (base.height + margin)],
                       fill=(128, 128, 128, 128), width=3)
             # draw eHP values on the hp bar
-            draw.text([width * percentage - 40, base.height / 2 + 0+i*(base.height+margin)], str(floor(entry[j])),fill=(0, 0, 0, 255), font=fntsmall)
+            draw.text([width * percentage - 40, base.height / 2 + 0 + i * (base.height + margin)], str(floor(entry[j])),
+                      fill=(0, 0, 0, 255), font=fntsmall)
             # draw character name
-            draw.text((15, base.height / 2 +i*(base.height+margin)), entry[0] +" "+ str(floor(entry[-1])), fill=(0, 0, 0, 255),
+            draw.text((15, base.height / 2 + i * (base.height + margin)), entry[0] + " " + str(floor(entry[-1])),
+                      fill=(0, 0, 0, 255),
                       font=fnt)
 
             #  generate coordinates for diagonal lines between hb bars
-            draw_lines_start.append((comp_image.width * percentage, base.height+0+i*(base.height+margin)))
-            draw_lines_end.append((comp_image.width * percentage, 0+i*(base.height+margin)))
-
+            draw_lines_start.append((comp_image.width * percentage, base.height + 0 + i * (base.height + margin)))
+            draw_lines_end.append((comp_image.width * percentage, 0 + i * (base.height + margin)))
 
         # draw diagonal hp bars
-        for pair in zip(draw_lines_temp,draw_lines_end):
+        for pair in zip(draw_lines_temp, draw_lines_end):
             list = pair[0] + pair[1]
             draw = ImageDraw.Draw(comp_image)
             draw.line(list, fill=(128, 128, 128, 128), width=3)
