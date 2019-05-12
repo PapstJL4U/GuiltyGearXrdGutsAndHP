@@ -185,7 +185,7 @@ def create_comp_img(character, char_health):
     for pair in zip(diagonals_start, diagonals_end):
         list = pair[0] + pair[1]
         draw = ImageDraw.Draw(comp_image)
-        draw.line(list , fill=(255, 255, 255, 128), width=3)
+        draw.line(list , fill=(128, 128, 128, 128), width=3)
     comp_image.save(os.path.join("output", "comp", name +"_comp"+ ".png"))
 
 def draw_comp():
