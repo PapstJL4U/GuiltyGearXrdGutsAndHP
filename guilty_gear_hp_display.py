@@ -175,6 +175,7 @@ def create_comp_img(character, char_health):
                   fill=(128, 128, 128, 128), width=3)
         draw.text([scaled.width * percentage - 35, scaled.height/2], str(floor(char_health[i])), \
                   fill=(0, 0, 0, 255), font=fntsmall)
+        draw.text((15, scaled.height / 2), "EHP appr. "+str(floor(char_health[-1])), fill=(0, 0, 0, 255), font=fntsmall)
         diagonals_end.append((floor(scaled.width * percentage), base.height + margin))
 
     scaled.save(os.path.join("output", "comp", "sub", name +"_scaled"+ ".png"))
