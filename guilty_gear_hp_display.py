@@ -128,12 +128,12 @@ def create_comp_img(char_health):
 
     # generate data to build image with two healthbars: the first shows ingame display, the 2nd effective health.
     name = char_health[0]
-    base = Image.open(os.path.join("img", "healthbar_only_radical.png"), mode='r') # canvas for ingame representation
-    scaled = Image.open(os.path.join("img", "healthbar_only_radical.png"), mode='r') # canvas for effective health
+    base = Image.open(os.path.join("img", "healthbar_only_radical.png"), mode='r')  # canvas for ingame representation
+    scaled = Image.open(os.path.join("img", "healthbar_only_radical.png"), mode='r')  # canvas for effective health
     width = base.width
     margin = 25
     height = base.height + scaled.height + margin
-    comp_image = Image.new(mode="RGBA", size=(width, height)) # combined canvas of base and width
+    comp_image = Image.new(mode="RGBA", size=(width, height))  # combined canvas of base and width
     fnt = ImageFont.truetype('C:\Windows\Fonts\chintzy.ttf', 30)
     fntsmall = ImageFont.truetype('C:\Windows\Fonts\chintzy.ttf', 15)
 
@@ -143,7 +143,7 @@ def create_comp_img(char_health):
     # draw percentage value
     i = 50
     while i > 0:
-        iip = i / 100 # iip = i in percentage to i goes from 50->0 with an intervall of 10
+        iip = i / 100  # iip = i in percentage to i goes from 50->0 with an intervall of 10
         draw = ImageDraw.Draw(base)
         draw.line([base.width - base.width * iip, 0, base.width - base.width * iip, base.height],
                   fill=(128, 128, 128, 128), width=3)
@@ -263,8 +263,7 @@ def draw_complete_comp():
 
 
 if __name__ == '__main__':
-    # test_stuff()
-    # create_real_hp()
-    # create_real_hp_seperate()
+    create_real_hp()
+    create_real_hp_seperate()
     draw_comp()
     draw_complete_comp()
