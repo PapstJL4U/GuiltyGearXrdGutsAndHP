@@ -3,7 +3,8 @@ which shows the effective damage multiplier base on the characters health
 """
 from __future__ import division
 import plotly
-import plotly.plotly as ply
+#old and deprecated
+#import plotly.plotly as ply
 import plotly.graph_objs as go
 import guiltygeardata as ggd
 
@@ -33,7 +34,7 @@ def main():
     # 4+: stops loop
     debug = 1
 
-    while debug < 2:
+    while debug < 4:
         if debug == 1:
             for char in char_list:
                 print('{}s effective HPs are {:.5}'.format(char[0], ggd.effectiveHP(char)))
@@ -67,7 +68,9 @@ def main():
                           )
             fig = dict(data=data, layout=layout)
             if publishOnline:
-                ply.iplot(fig, filename='gg-graph-online')
+                #old and deprecated
+                #ply.iplot(fig, filename='gg-graph-online')
+                pass
             else:
                 plotly.offline.plot(fig, filename='gg-graph.html')
             debug += 1

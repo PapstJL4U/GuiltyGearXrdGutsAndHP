@@ -64,7 +64,7 @@ class characters:
         Bedman = ('Bedman', self._hp, 0.93, _guts.getGutsValues(0))
         Haehyun = ('Haehyun', self._hp, 0.96, _guts.getGutsValues(2))
         Potemkin = ('Potemkin', self._hp, 0.93, _guts.getGutsValues(3))
-        Baiken = ('Baiken', self._hp, 1.18, _guts.getGutsValues(4))
+        Baiken = ('Baiken', self._hp, 1.12, _guts.getGutsValues(4))
         Answer = ('Answer', self._hp, 1.03, _guts.getGutsValues(0))
 
         self._char_list = (Chipp, Millia, Zato, Axl, Ino, Ramlethal, Dizzy, Sin,
