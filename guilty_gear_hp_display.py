@@ -179,7 +179,7 @@ def create_comp_img(char_health):
     # save for no reason
     scaled.save(os.path.join("output", "comp", "sub", name + "_scaled" + ".png"))
 
-    # combine ingame display and effective hb display abd draw lines between them to guide eyes
+    # combine ingame display and effective hp display abd draw lines between them to guide eyes
     comp_image.paste(base, (0, 0))
     comp_image.paste(scaled, (0, (base.height + margin)))
     for pair in zip(diagonals_start, diagonals_end):
